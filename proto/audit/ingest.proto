@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package audit.ingest;
+
+option go_package = "github.com/adityakw90/service-audit-proto/gen/go/ingest;ingest";
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+service IngestionService {
+  rpc RecordEvent(RecordEventRequest) returns (RecordEventResponse);
+  rpc RecordEvents(RecordEventsRequest) returns (RecordEventsResponse);
+}
+
+enum RecordEventStatus {
+  RECORD_EVENT_STATUS_UNSPECIFIED = 0;
+  RECORD_EVENT_STATUS_STORED = 1;
+  RECORD_EVENT_STATUS_DUPLICATE = 2;
+}
+
+// RecordEventRequest contains the client-supplied event-table fields.
+message RecordEventRequest {
+  string source = 1;
+  string event_id = 2;
+  string action = 3;
+  string actor_type = 4;
+  string actor_id = 5;
+  optional string actor_name = 6;
+  string entity_type = 7;
+  string entity_id = 8;
+  optional string entity_name = 9;
+  google.protobuf.Struct metadata = 10;
+  google.protobuf.Timestamp occurred_at = 11;
+}
+
+message RecordEventResponse {
+  string uid = 1;
+  RecordEventStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
+
+message RecordEventsRequest {
+  repeated RecordEventRequest events = 1;
+}
+
+message RecordEventsResponse {
+  repeated RecordEventResult results = 1;
+}
+
+message RecordEventResult {
+  string uid = 1;
+  RecordEventStatus status = 2;
+  string error_code = 3;
+  string error_message = 4;
+  google.protobuf.Timestamp created_at = 5;
+}

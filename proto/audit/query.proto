@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package audit.query;
+
+option go_package = "github.com/adityakw90/service-audit-proto/gen/go/query;query";
+
+import "audit/common.proto";
+import "google/protobuf/timestamp.proto";
+
+service QueryService {
+  rpc GetEvent(GetEventRequest) returns (audit.common.Event);
+  rpc SearchEvents(SearchEventsRequest) returns (SearchEventsResponse);
+  rpc ListSources(ListSourcesRequest) returns (ListSourcesResponse);
+  rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse);
+  rpc ListActors(ListActorsRequest) returns (ListActorsResponse);
+}
+
+message GetEventRequest {
+  string uid = 1;
+}
+
+// SearchEventsRequest exposes filters backed directly by event-table columns.
+message SearchEventsRequest {
+  repeated string sources = 1;
+  repeated string actions = 2;
+  optional string event_id = 3;
+  optional string actor_type = 4;
+  optional string actor_id = 5;
+  optional string entity_type = 6;
+  optional string entity_id = 7;
+  optional google.protobuf.Timestamp occurred_from = 8;
+  optional google.protobuf.Timestamp occurred_to = 9;
+  uint32 page_size = 10;
+  string page_token = 11;
+}
+
+message SearchEventsResponse {
+  repeated audit.common.Event items = 1;
+  string next_page_token = 2;
+}
+
+message ListSourcesRequest {
+  optional string query = 1; // search using ilike %query% on column name
+  uint32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListSourcesResponse {
+  repeated audit.common.Source items = 1;
+  string next_page_token = 2;
+}
+
+message ListEntitiesRequest {
+  optional string query = 1; // search using ilike %query% on columns entity_name, entity_id, entity_type
+  uint32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListEntitiesResponse {
+  repeated audit.common.Entity items = 1;
+  string next_page_token = 2;
+}
+
+message ListActorsRequest {
+  optional string query = 1; // search using ilike %query% on columns actor_name, actor_id, actor_type
+  uint32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListActorsResponse {
+  repeated audit.common.Actor items = 1;
+  string next_page_token = 2;
+}
