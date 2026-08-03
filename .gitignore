@@ -1,0 +1,7 @@
+# IDE
+/.claude
+
+# Python build and interpreter artifacts
+__pycache__/
+*.py[cod]
+/dist/
